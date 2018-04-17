@@ -23,8 +23,8 @@ import my_data
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--batch_size', default=100, type=int, help='batch size')
-parser.add_argument('--train_steps', default=1000, type=int,
+parser.add_argument('--batch_size', default=1000, type=int, help='batch size')
+parser.add_argument('--train_steps', default=10000, type=int,
                     help='number of training steps')
 
 def main(argv):
@@ -43,9 +43,9 @@ def main(argv):
     classifier = tf.estimator.DNNClassifier(
         feature_columns=my_feature_columns,
         # Two hidden layers of 10 nodes each.
-        hidden_units=[10, 10],
-        # The model must choose between 3 classes.
-        n_classes=6)
+        hidden_units=[10, 10, 10],
+        # The model must choose between 5 classes.
+        n_classes=5)
 
     # Train the Model.
     classifier.train(
@@ -61,11 +61,11 @@ def main(argv):
     print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
 
     # Generate predictions from the model
-    expected = [1, 2, 3]
+    expected = [0, 3, 4]
     predict_x = {
-        'Age': [20, 15, 53],
-        'Code1': [8, 9, 5],
-        'Code2': [1, 2, 5],
+        'Age': [20, 33, 92],
+        'Code1': [8, 7, 16],
+        'Code2': [1, 10, 16],
     }
 
     predictions = classifier.predict(
@@ -74,6 +74,8 @@ def main(argv):
                                                 batch_size=args.batch_size))
 
     template = ('\nPrediction is "{}" ({:.1f}%), expected "{}"')
+
+    print(zip(predictions, expected))
 
     for pred_dict, expec in zip(predictions, expected):
         class_id = pred_dict['class_ids'][0]

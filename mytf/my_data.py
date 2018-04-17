@@ -3,7 +3,7 @@ import tensorflow as tf
 
 
 CSV_COLUMN_NAMES = ['Age', 'Code1', 'Code2', 'Output']
-OUTPUT = [1,2,3,4,5]
+OUTPUT = [0,1,2,3,4]
 
 
 def load_data(y_name='Output'):
