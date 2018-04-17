@@ -38,6 +38,7 @@ def main(argv):
     for key in train_x.keys():
         my_feature_columns.append(tf.feature_column.numeric_column(key=key))
 
+    print(my_feature_columns)
     # Build 2 hidden layer DNN with 10, 10 units respectively.
     classifier = tf.estimator.DNNClassifier(
         feature_columns=my_feature_columns,
@@ -60,12 +61,11 @@ def main(argv):
     print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
 
     # Generate predictions from the model
-    expected = ['Setosa', 'Versicolor', 'Virginica']
+    expected = [1, 2, 3]
     predict_x = {
-        'SepalLength': [5.1, 5.9, 6.9],
-        'SepalWidth': [3.3, 3.0, 3.1],
-        'PetalLength': [1.7, 4.2, 5.4],
-        'PetalWidth': [0.5, 1.5, 2.1],
+        'Age': [20, 15, 53],
+        'Code1': [8, 9, 5],
+        'Code2': [1, 2, 5],
     }
 
     predictions = classifier.predict(
@@ -79,7 +79,7 @@ def main(argv):
         class_id = pred_dict['class_ids'][0]
         probability = pred_dict['probabilities'][class_id]
 
-        print(template.format(my_data.SPECIES[class_id],
+        print(template.format(my_data.OUTPUT[class_id],
                               100 * probability, expec))
 
 
