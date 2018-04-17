@@ -1,0 +1,1 @@
+shuf data.csv -o shuffled_data.csv
