@@ -12,19 +12,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 """An Example of a DNNClassifier for the my dataset."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+# from __future__ import absolute_import
+# from __future__ import division
+# from __future__ import print_function
 
 import argparse
 import tensorflow as tf
 
 import my_data
 
+BATCH_SIZE=100
+ITERATIONS=10000
+HIDDEN_UNITS=[10,10,10]
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--batch_size', default=1000, type=int, help='batch size')
-parser.add_argument('--train_steps', default=1000, type=int,
+parser.add_argument('--batch_size', default=BATCH_SIZE, type=int, help='batch size')
+parser.add_argument('--train_steps', default=ITERATIONS, type=int,
                     help='number of training steps')
 
 def main(argv):
@@ -39,13 +42,25 @@ def main(argv):
         my_feature_columns.append(tf.feature_column.numeric_column(key=key))
 
     print(my_feature_columns)
+
+    # cost = tf.summary.scalar("cost", cost)
+    # accuracy = tf.summary.scalar("accuracy", accuracy)
+    # train_summary_op = tf.summary.merge([cost, accuracy])
+    # train_writer = tf.summary.FileWriter('/tmp/train',
+    #                                      graph=tf.get_default_graph())
+
     # Build 2 hidden layer DNN with 10, 10 units respectively.
     classifier = tf.estimator.DNNClassifier(
         feature_columns=my_feature_columns,
-        # Two hidden layers of 10 nodes each.
-        hidden_units=[10, 10, 10],
+        # hidden layers of 10 nodes each.
+        hidden_units=HIDDEN_UNITS,
         # The model must choose between 5 classes.
-        n_classes=5)
+        n_classes=5,
+        model_dir='/tmp/train229',  config=tf.contrib.learn.RunConfig(
+        save_checkpoints_steps=150,
+        save_checkpoints_secs=None,
+        save_summary_steps=100,
+    ))
 
     # Train the Model.
     classifier.train(
@@ -61,11 +76,11 @@ def main(argv):
     print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
 
     # Generate predictions from the model
-    expected = [0, 3, 4]
+    expected = [0, 3, 2]
     predict_x = {
-        'Age': [20, 33, 92],
-        'Code1': [8, 7, 16],
-        'Code2': [1, 10, 16],
+        'Age': [20, 33, 53],
+        'Code1': [8, 7, 5],
+        'Code2': [1, 10, 5],
     }
 
     predictions = classifier.predict(
